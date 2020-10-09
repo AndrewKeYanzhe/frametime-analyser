@@ -24,7 +24,7 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 #RDR2 capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4", cv2.CAP_MSMF)	#worse decoder
 cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
-cap = cv2.VideoCapture("E:\Downloads\Xiaomi Yi 4K 2 1080p 60fps ultra wide stabilization on sample.mp4")
+# cap = cv2.VideoCapture("E:\Downloads\Xiaomi Yi 4K 2 1080p 60fps ultra wide stabilization on sample.mp4")
 # cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
 
 #ACO capture
@@ -43,6 +43,9 @@ graph_width = 60 #width of grametime graph
 frametime_graph = [0]*graph_width #list of previous frametimes
 before_showing = None #timestamp to be taken before cv2.imshow
 moving_avg = 0	#exponentially decaying moving avg for previous frametimes
+fps_list = [0]*60
+fps = 0
+
 
 while(cap.isOpened()):
     ret, frame = cap.read() 
@@ -72,20 +75,31 @@ while(cap.isOpened()):
     threshold = 0.25*moving_avg #threshold below which a frame is considered "identical" or dropped
 
     if average < threshold:
-        result = "Dropped"
+    	fps_list.pop(0)
+    	fps_list.append(0)
+    	fps = sum(fps_list)
     else:
         result = ""
         frametime_text = frametime
         frametime_graph.pop(0)
         frametime_graph.append(frametime)
+        fps_list.pop(0)
+    	fps_list.append(1)
+    	fps = sum(fps_list)
         # print frametime_graph
         frametime = 0	#frametime will be incremented at end of loop
 
+    if(count)<60:
+    	fps = ""
     # print (average, moving_avg, result)
     moving_avg = (moving_avg + average/3)*3/4
 
 
-    texted_image =cv2.putText(frame, text='{:4.2f}'.format(average)+" "+str(frametime_text)+" "+result, org=(200,200),fontFace=3, fontScale=3, color=(0,0,255), thickness=5)
+
+    # text_to_write = '{:4.2f}'.format(average)+" "+str(frametime_text)+" "+result
+    text_to_write = str(fps)
+
+    texted_image =cv2.putText(frame, text=text_to_write, org=(200,200),fontFace=3, fontScale=3, color=(0,0,255), thickness=5)
 
     resize = ResizeWithAspectRatio(texted_image, width=1280) #slow function, about 2.5ms
 
