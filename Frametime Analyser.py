@@ -23,8 +23,9 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 
 #RDR2 capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4", cv2.CAP_MSMF)	#worse decoder
-# cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
-cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
+cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
+cap = cv2.VideoCapture("E:\Downloads\Xiaomi Yi 4K 2 1080p 60fps ultra wide stabilization on sample.mp4")
+# cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
 
 #ACO capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.24-21.36.mp4")
