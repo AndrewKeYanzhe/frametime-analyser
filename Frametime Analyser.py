@@ -25,12 +25,12 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4", cv2.CAP_MSMF)	#worse decoder
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
 # cap = cv2.VideoCapture("E:\Downloads\Xiaomi Yi 4K 2 1080p 60fps ultra wide stabilization on sample.mp4")
-cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
+# cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
 
 #ACO capture
-# cap = cv2.VideoCapture("F:/ReLive/2020.09.24-21.36.mp4")
+cap = cv2.VideoCapture("F:/ReLive/2020.09.24-21.36.mp4")
 
-cap = cv2.VideoCapture("E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4")
+# cap = cv2.VideoCapture("E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4")
 # cap = cv2.VideoCapture("E:/Downloads/COSTA RICA IN 4K 60fps HDR (ULTRA HD).mp4")
 # cap = cv2.VideoCapture("E:\Downloads\GTA 5 ►RTX 3090 8k 60fps MAX SETTINGS With Ray Tracing Ultra Graphics Mod! GTA 6 Level PC Graphics!.mp4")
 
@@ -163,8 +163,8 @@ while(cap.isOpened()):
     cv2.line(resize,(plt_origin_x,plt_origin_y+20*y_scale),(plt_origin_x+fps_graph_samples*pt_spacing,plt_origin_y+20*y_scale),(255,255,255),1)
     cv2.putText(resize, text="FRAME-RATE (FPS)", org=(plt_origin_x+fps_graph_samples*pt_spacing -120,plt_origin_y-15),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
     cv2.putText(resize, text="60", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+5),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
-    cv2.putText(resize, text="50", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+21*y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
-    cv2.putText(resize, text="40", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+41*y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
+    cv2.putText(resize, text="40", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+21*y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
+    cv2.putText(resize, text="20", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+41*y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
         # if key !=0:
             # cv2.line(resize,(plt_origin_x + key*pt_spacing - pt_gap, plt_origin_y- prev_ft*10),(plt_origin_x + key*pt_spacing, plt_origin_y-value*10),ft_color,1)
 
