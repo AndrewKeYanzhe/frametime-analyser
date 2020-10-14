@@ -23,12 +23,12 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
 
 #RDR2 capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4", cv2.CAP_MSMF)	#worse decoder
-# cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
-# cap = cv2.VideoCapture("E:\Downloads\Xiaomi Yi 4K 2 1080p 60fps ultra wide stabilization on sample.mp4")
-# cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
+cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
+cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33-1.m4v") #to mpeg 2
+cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
 
 #ACO capture
-cap = cv2.VideoCapture("F:/ReLive/2020.09.24-21.36.mp4")
+# cap = cv2.VideoCapture("F:/ReLive/2020.09.24-21.36.mp4")
 
 # cap = cv2.VideoCapture("E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4")
 # cap = cv2.VideoCapture("E:/Downloads/COSTA RICA IN 4K 60fps HDR (ULTRA HD).mp4")
@@ -48,29 +48,47 @@ fps = 0
 fps_graph_samples = 580
 fps_graph = [0]*fps_graph_samples
 
+perf_list = [0]
 
 while(cap.isOpened()):
-    ret, frame = cap.read() 
+     
+
 
     if count == 0:
+        ret, frame = cap.read()
         prev_frame = frame
         height = len(frame)
         width = len(frame[0])
         before_showing = cv2.getTickCount()
 
-    #downscale before calculating difference
+
+    perf_list.append((cv2.getTickCount() - before_showing )/ cv2.getTickFrequency()*1000-sum(perf_list))
+
+    ret, frame = cap.read()
+
+    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
+
+
+    # #downscale before calculating difference
     scale = 0.1
     cropped_frame = cv2.resize(frame, (0,0), fx=scale, fy=scale)
     cropped_prev_frame = cv2.resize(prev_frame, (0,0), fx=scale, fy=scale) 
+    
+    # cropped_frame = frame
+    # cropped_prev_frame = prev_frame
+
     #convert to grayscale
     cropped_frame = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2GRAY)
     cropped_prev_frame = cv2.cvtColor(cropped_prev_frame, cv2.COLOR_BGR2GRAY)
+
 
     #calculate frame difference
     frame_diff = cv2.absdiff(cropped_frame, cropped_prev_frame)
     average = frame_diff.mean(axis=0).mean(axis=0)
     if count == 1:
     	moving_avg = average
+
+    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
     	
     # print average
 
@@ -109,13 +127,16 @@ while(cap.isOpened()):
     # text_to_write = '{:4.2f}'.format(average)+" "+str(frametime_text)+" "+result
     # texted_image =cv2.putText(frame, text=text_to_write, org=(200,200),fontFace=3, fontScale=3, color=(0,0,255), thickness=5)
     
- 
+    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
     text_to_write = str(fps)
     texted_image =cv2.putText(frame, text=text_to_write, org=(1750,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2, color=(255,255,255), thickness=5)
 
     resize = ResizeWithAspectRatio(texted_image, width=1280) #slow function, about 2.5ms
 
+
+    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
+    
     #drawing frametime graph
     pt_width = 2
     pt_spacing = 2
@@ -172,7 +193,16 @@ while(cap.isOpened()):
     # Calculate total time elapse since previous cv2.imshow, for PERFORMANCE ANALYSIS
     calc_time = (cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000
     if calc_time>16:
+
+
+        perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
+
+
+
+        perf_list.append(calc_time)
         print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+        perf_list = list(np.around(np.array(perf_list),2))
+        print perf_list
     # print calc_time
     # print "----"
       
@@ -184,18 +214,24 @@ while(cap.isOpened()):
     cv2.imshow('frame',resize)
 
 
-    prev_ret, prev_frame = ret, frame
+    perf_list =[(cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000]
+
+
+    prev_frame = frame
     count = count + 1
     frametime = frametime + 1
 
 
-    if pause_frame:
-	    if cv2.waitKey(0) & 0xFF == ord('q'):
-        	break
-    else:    
-	    if cv2.waitKey(1) & 0xFF == ord('q'):
-	        break
-        
+    # if pause_frame:
+	   #  if cv2.waitKey(0) & 0xFF == ord('q'):
+    #     	break
+    # else:    
+	   #  if cv2.waitKey(1) & 0xFF == ord('q'):
+	   #      break
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+          break
+
+    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
 cap.release()
 cv2.destroyAllWindows()
