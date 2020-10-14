@@ -4,35 +4,50 @@ import numpy as np
 import cv2
 from skimage.measure import compare_ssim
 import matplotlib.pyplot as plt
+from libraries import *
 
 pause_frame = False 
 # pause_frame = True #wait for keypress before playing next frame
-
-def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
-    dim = None
-    (h, w) = image.shape[:2]
-    if width is None and height is None:
-        return image
-    if width is None:
-        r = height / float(h)
-        dim = (int(w * r), height)
-    else:
-        r = width / float(w)
-        dim = (width, int(h * r))
-    return cv2.resize(image, dim, interpolation=cv2.INTER_LINEAR)
 
 #RDR2 capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4", cv2.CAP_MSMF)	#worse decoder
 cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
 cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33-1.m4v") #to mpeg 2
-cap = cv2.VideoCapture("F:/ReLive/rdr2 h264.m4v") #transcoded HEVC to h264
+file_path="F:/ReLive/rdr2 h264.m4v" #transcoded HEVC to h264
 
 #ACO capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.24-21.36.mp4")
 
-# cap = cv2.VideoCapture("E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4")
-# cap = cv2.VideoCapture("E:/Downloads/COSTA RICA IN 4K 60fps HDR (ULTRA HD).mp4")
+# file_path="E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4"
+# file_path="E:/Downloads/COSTA RICA IN 4K 60fps HDR (ULTRA HD).mp4"
 # cap = cv2.VideoCapture("E:\Downloads\GTA 5 ►RTX 3090 8k 60fps MAX SETTINGS With Ray Tracing Ultra Graphics Mod! GTA 6 Level PC Graphics!.mp4")
+
+# import the necessary packages
+# from imutils.video import FileVideoStream
+# from imutils.video import FPS
+# import numpy as np
+import argparse
+# import imutils
+import time
+# import cv2
+
+# # construct the argument parse and parse the arguments
+# ap = argparse.ArgumentParser()
+# ap.add_argument("-v", "--video", required=True,
+#     help="path to input video file")
+# args = vars(ap.parse_args())
+# # start the file video stream thread and allow the buffer to
+# # start to fill
+# print("[INFO] starting video file thread...")
+# print args
+
+# fvs = FileVideoStream(args["video"]).start()
+fvs = FileVideoStream(file_path).start()
+time.sleep(3)
+# start the FPS timer
+# fps = FPS().start()
+
+
 
 count = 0
 frametime = 0
@@ -50,12 +65,14 @@ fps_graph = [0]*fps_graph_samples
 
 perf_list = [0]
 
-while(cap.isOpened()):
+while fvs.more():   
+
+    
      
 
 
     if count == 0:
-        ret, frame = cap.read()
+        frame = fvs.read()
         prev_frame = frame
         height = len(frame)
         width = len(frame[0])
@@ -64,7 +81,7 @@ while(cap.isOpened()):
 
     perf_list.append((cv2.getTickCount() - before_showing )/ cv2.getTickFrequency()*1000-sum(perf_list))
 
-    ret, frame = cap.read()
+    frame = fvs.read()
 
     perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
@@ -136,7 +153,7 @@ while(cap.isOpened()):
 
 
     perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
-    
+
     #drawing frametime graph
     pt_width = 2
     pt_spacing = 2
