@@ -123,7 +123,8 @@ while fvs.more():
 
 
     text_to_write = str(fps)
-    texted_image =cv2.putText(frame, text=text_to_write, org=(1750,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2, color=(255,255,255), thickness=5)
+    texted_image =cv2.putText(frame, text=text_to_write, org=(1140,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2, color=(255,255,255), thickness=5)
+    # texted_image =cv2.putText(frame, text="hello", org=(750,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2, color=(255,255,255), thickness=5)
 
     resize = ResizeWithAspectRatio(texted_image, width=1280) #slow function, about 2.5ms
     perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
