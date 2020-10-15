@@ -3,6 +3,7 @@ import time
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import time
 from libraries import *
 
 pause_frame = False 
@@ -10,8 +11,6 @@ pause_frame = False
 
 #RDR2 capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4", cv2.CAP_MSMF)	#worse decoder
-cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4")
-cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33-1.m4v") #to mpeg 2
 file_path="F:/ReLive/rdr2 h264.m4v" #transcoded HEVC to h264
 
 #ACO capture
@@ -24,26 +23,7 @@ file_path="F:/ReLive/rdr2 h264.m4v" #transcoded HEVC to h264
 
 
 
-# import the necessary packages
-# from imutils.video import FileVideoStream
-# from imutils.video import FPS
-# import numpy as np
-import argparse
-# import imutils
-import time
-# import cv2
 
-# # construct the argument parse and parse the arguments
-# ap = argparse.ArgumentParser()
-# ap.add_argument("-v", "--video", required=True,
-#     help="path to input video file")
-# args = vars(ap.parse_args())
-# # start the file video stream thread and allow the buffer to
-# # start to fill
-# print("[INFO] starting video file thread...")
-# print args
-
-# fvs = FileVideoStream(args["video"]).start()
 fvs = FileVideoStream(file_path).start()
 time.sleep(3)
 # start the FPS timer
@@ -55,17 +35,21 @@ count = 0
 frametime = 0
 frametime_text = "None"
 
-graph_width = 60 #width of grametime graph
 
-frametime_graph = [0]*graph_width #list of previous frametimes
-before_showing = None #timestamp to be taken before cv2.imshow
-moving_avg = 0	#exponentially decaying moving avg for previous frametimes
-fps_list = [0]*60
+frametime_samples = 60
+frametime_graph = [0]*frametime_samples #list of previous frametimes
+
+
+fps_list = [0]*60 # 0 means repeated frame, 1 means unique frame. summation of fps_list gives the current fps
 fps = 0
 fps_graph_samples = 580
 fps_graph = [0]*fps_graph_samples
 
-perf_list = [0]
+
+perf_list = [0] #list of miliseconds taken for each segment of code
+timestamp_before_imshow = None #timestamp to be taken before cv2.imshow
+moving_avg_brightness = 0	#exponentially decaying moving avg of previous frames' brightness
+
 
 while fvs.more():  
     if count == 0:
@@ -73,16 +57,12 @@ while fvs.more():
         prev_frame = frame
         height = len(frame)
         width = len(frame[0])
-        before_showing = cv2.getTickCount()
+        timestamp_before_imshow = cv2.getTickCount()
+    perf_list.append((cv2.getTickCount() - timestamp_before_imshow )/ cv2.getTickFrequency()*1000-sum(perf_list))
 
-
-
-    perf_list.append((cv2.getTickCount() - before_showing )/ cv2.getTickFrequency()*1000-sum(perf_list))
 
     frame = fvs.read()
-
-    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
-
+    perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
 
     # #downscale before calculating difference
@@ -100,14 +80,12 @@ while fvs.more():
     frame_diff = cv2.absdiff(cropped_frame, cropped_prev_frame)
     average = frame_diff.mean(axis=0).mean(axis=0)
     if count == 1:
-    	moving_avg = average
-
-    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
+    	moving_avg_brightness = average
+    perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
     	
-    # print average
 
-    threshold = 0.25*moving_avg #threshold below which a frame is considered "identical" or dropped
 
+    threshold = 0.25*moving_avg_brightness #threshold below which a frame is considered "identical" or dropped
     if average < threshold:
     	fps_list.pop(0)
     	fps_list.append(0)
@@ -127,29 +105,29 @@ while fvs.more():
 
     	fps_graph.pop(0)
     	fps_graph.append(fps)
-        # print frametime_graph
         frametime = 0	#frametime will be incremented at end of loop
-    # print fps
-    # print fps_list
+
+
     if(count)<60:
     	fps = ""
-    # print (average, moving_avg, result)
-    moving_avg = (moving_avg + average/3)*3/4
+    # print (average, moving_avg_brightness, result)
+    moving_avg_brightness = (moving_avg_brightness + average/3)*3/4
 
 
 
     # text_to_write = '{:4.2f}'.format(average)+" "+str(frametime_text)+" "+result
     # texted_image =cv2.putText(frame, text=text_to_write, org=(200,200),fontFace=3, fontScale=3, color=(0,0,255), thickness=5)
     
-    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
+
+    perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
+
 
     text_to_write = str(fps)
     texted_image =cv2.putText(frame, text=text_to_write, org=(1750,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2, color=(255,255,255), thickness=5)
 
     resize = ResizeWithAspectRatio(texted_image, width=1280) #slow function, about 2.5ms
+    perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
-
-    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
     #drawing frametime graph
     pt_width = 2
@@ -171,9 +149,9 @@ while fvs.more():
         cv2.line(resize,(plt_origin_x + key*pt_spacing, plt_origin_y-value*y_scale),(plt_origin_x + key*pt_spacing + pt_width, plt_origin_y-value*y_scale),ft_color,1)
         if key !=0:
             cv2.line(resize,(plt_origin_x + key*pt_spacing - pt_gap, plt_origin_y- prev_ft*y_scale),(plt_origin_x + key*pt_spacing, plt_origin_y-value*y_scale),ft_color,1)
-    cv2.rectangle(resize,(plt_origin_x,plt_origin_y-60),(plt_origin_x+graph_width*pt_spacing,plt_origin_y-10),(255,255,255),1)
-    cv2.putText(resize, text="16.7", org=(plt_origin_x+graph_width*pt_spacing+10,plt_origin_y-15),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
-    cv2.putText(resize, text="33.3", org=(plt_origin_x+graph_width*pt_spacing+10,plt_origin_y- 15 - y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
+    cv2.rectangle(resize,(plt_origin_x,plt_origin_y-60),(plt_origin_x+frametime_samples*pt_spacing,plt_origin_y-10),(255,255,255),1)
+    cv2.putText(resize, text="16.7", org=(plt_origin_x+frametime_samples*pt_spacing+10,plt_origin_y-15),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
+    cv2.putText(resize, text="33.3", org=(plt_origin_x+frametime_samples*pt_spacing+10,plt_origin_y- 15 - y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
     cv2.putText(resize, text="FRAME-TIME (MS)", org=(plt_origin_x,plt_origin_y -70),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=(255,255,255), thickness=1)
 
     plt_origin_x = 60
@@ -183,7 +161,7 @@ while fvs.more():
     pt_gap = pt_spacing - pt_width
     y_scale = 4
 
-    graph_speed = 2
+    graph_speed = 2 #rate at which graph is moving from right to left
 
     for key, value in enumerate(fps_graph):
         if count<fps_graph_samples-key+60:
@@ -205,30 +183,25 @@ while fvs.more():
 
 
     # Calculate total time elapse since previous cv2.imshow, for PERFORMANCE ANALYSIS
-    calc_time = (cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000
+    calc_time = (cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000
     if calc_time>16:
 
 
-        perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
-
-
-
+        perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
         perf_list.append(calc_time)
-        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
         perf_list = list(np.around(np.array(perf_list),2))
+
+        print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"        
         print perf_list
-    # print calc_time
-    # print "----"
+
       
     #vsync
-    while ((cv2.getTickCount() - before_showing)/cv2.getTickFrequency()*10**6< 10**6/60.01):
+    while ((cv2.getTickCount() - timestamp_before_imshow)/cv2.getTickFrequency()*10**6< 10**6/60.01):
         continue
-    # print (cv2.getTickCount() - before_showing)/cv2.getTickFrequency()*1000 #check if equal 16.666, disable to ensure vsync works
-    before_showing = cv2.getTickCount()
+    # print (cv2.getTickCount() - timestamp_before_imshow)/cv2.getTickFrequency()*1000 #check if equal 16.666, disable to ensure vsync works
+    timestamp_before_imshow = cv2.getTickCount()
     cv2.imshow('frame',resize)
-
-
-    perf_list =[(cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000]
+    perf_list =[(cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000]
 
 
     prev_frame = frame
@@ -245,7 +218,7 @@ while fvs.more():
     if cv2.waitKey(1) & 0xFF == ord('q'):
           break
 
-    perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
+    perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
 cap.release()
 cv2.destroyAllWindows()
