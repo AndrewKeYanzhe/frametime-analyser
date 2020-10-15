@@ -2,7 +2,6 @@
 import time
 import numpy as np
 import cv2
-from skimage.measure import compare_ssim
 import matplotlib.pyplot as plt
 from libraries import *
 
@@ -21,6 +20,9 @@ file_path="F:/ReLive/rdr2 h264.m4v" #transcoded HEVC to h264
 # file_path="E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4"
 # file_path="E:/Downloads/COSTA RICA IN 4K 60fps HDR (ULTRA HD).mp4"
 # cap = cv2.VideoCapture("E:\Downloads\GTA 5 ►RTX 3090 8k 60fps MAX SETTINGS With Ray Tracing Ultra Graphics Mod! GTA 6 Level PC Graphics!.mp4")
+
+
+
 
 # import the necessary packages
 # from imutils.video import FileVideoStream
@@ -65,18 +67,14 @@ fps_graph = [0]*fps_graph_samples
 
 perf_list = [0]
 
-while fvs.more():   
-
-    
-     
-
-
+while fvs.more():  
     if count == 0:
         frame = fvs.read()
         prev_frame = frame
         height = len(frame)
         width = len(frame[0])
         before_showing = cv2.getTickCount()
+
 
 
     perf_list.append((cv2.getTickCount() - before_showing )/ cv2.getTickFrequency()*1000-sum(perf_list))
@@ -86,13 +84,12 @@ while fvs.more():
     perf_list.append((cv2.getTickCount() - before_showing)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
 
+
     # #downscale before calculating difference
     scale = 0.1
     cropped_frame = cv2.resize(frame, (0,0), fx=scale, fy=scale)
     cropped_prev_frame = cv2.resize(prev_frame, (0,0), fx=scale, fy=scale) 
     
-    # cropped_frame = frame
-    # cropped_prev_frame = prev_frame
 
     #convert to grayscale
     cropped_frame = cv2.cvtColor(cropped_frame, cv2.COLOR_BGR2GRAY)
