@@ -30,7 +30,8 @@ else:
     from Queue import Queue
 
 
-class FileVideoStream:
+#multithread video decode and downscale to 720p
+class FileVideoStream: 
     # def __init__(self, path, transform=None, queue_size=128):
     def __init__(self, path, transform=None, queue_size=196):
         # initialize the file video stream along with the boolean

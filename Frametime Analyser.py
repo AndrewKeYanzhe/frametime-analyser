@@ -61,9 +61,12 @@ while fvs.more():
     perf_list.append((cv2.getTickCount() - timestamp_before_imshow )/ cv2.getTickFrequency()*1000-sum(perf_list))
 
 
-    frame = fvs.read()
+    src_frame = fvs.read()
+    # frame = src_frame
+    frame = src_frame.copy()
     perf_list.append((cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000-sum(perf_list))
 
+    # cv2.imshow('frame',prev_frame)
 
     # #downscale before calculating difference
     scale = 0.1
@@ -203,11 +206,13 @@ while fvs.more():
         continue
     # print (cv2.getTickCount() - timestamp_before_imshow)/cv2.getTickFrequency()*1000 #check if equal 16.666, disable to ensure vsync works
     timestamp_before_imshow = cv2.getTickCount()
-    cv2.imshow('frame',resize)
+    # cv2.imshow('frame',resize)
+    # cv2.imshow('frame',frame_diff)
+    # cv2.imshow('frame',ResizeWithAspectRatio(frame_diff,width=1280))
     perf_list =[(cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000]
 
 
-    prev_frame = frame
+    prev_frame = src_frame
     count = count + 1
     frametime = frametime + 1
 
