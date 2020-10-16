@@ -206,7 +206,7 @@ while fvs.more():
         continue
     # print (cv2.getTickCount() - timestamp_before_imshow)/cv2.getTickFrequency()*1000 #check if equal 16.666, disable to ensure vsync works
     timestamp_before_imshow = cv2.getTickCount()
-    # cv2.imshow('frame',resize)
+    cv2.imshow('frame',resize)
     # cv2.imshow('frame',frame_diff)
     # cv2.imshow('frame',ResizeWithAspectRatio(frame_diff,width=1280))
     perf_list =[(cv2.getTickCount() - timestamp_before_imshow)/ cv2.getTickFrequency()*1000]
