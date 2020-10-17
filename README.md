@@ -1,11 +1,11 @@
 # Frametime-Analyser
 Frametime-analyser is a tool that detects duplicate frames in game footage to calculate FPS and frametimes.
 
-![](/Media/RDR2.gif)
+![Github is not loading my RDR2 Gif :(](/Media/RDR2.gif)
 
 It is inspired by Digital Foundry's FPSGui tool:
 
-[![](/Media/DF.gif)](https://youtu.be/niQfeglwDZ4?t=986)
+[![Github is not loading the Digital Foundry Gif :(](/Media/DF.gif)](https://youtu.be/niQfeglwDZ4?t=986)
 
 ## Setup
 
