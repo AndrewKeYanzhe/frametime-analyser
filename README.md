@@ -18,5 +18,6 @@ Frametime-analyser requires the following prerequisites
 
 ## Usage
 
-1. Open `Frametime Analyser.py` in a text editor and set `file_path` to the location of your video
-2. Run `Frametime Analyser.py`
+1. Clone this repo
+2. Open `Frametime Analyser.py` in a text editor and set `file_path` to the location of your video
+3. Run `Frametime Analyser.py`
