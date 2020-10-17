@@ -16,7 +16,7 @@ file_path="F:/ReLive/2020.10.17-09.29.mp4" #second h264
 # file_path="F:/ReLive/2020.09.24-21.36.mp4"
 
 # file_path="E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4"
-# file_path="F:/ReLive/2020.10.14q-21.51.mp4" #forza
+file_path="F:/ReLive/2020.10.14-21.51.mp4" #forza
 # cap = cv2.VideoCapture("E:\Downloads\GTA 5 ►RTX 3090 8k 60fps MAX SETTINGS With Ray Tracing Ultra Graphics Mod! GTA 6 Level PC Graphics!.mp4")
 
 
@@ -35,7 +35,7 @@ frametime = 0
 frametime_text = "None"
 
 
-frametime_samples = 60
+frametime_samples = 40
 frametime_graph = [0]*frametime_samples #list of previous frametimes
 
 
@@ -63,6 +63,7 @@ while fvs.more():
     text_color = (255,255,255)
     # graph_color = (128,0,0)
     graph_color = (93, 232, 130)
+    shadow_color = (0,0,0)
 
     src_frame = fvs.read()
     # frame = src_frame
@@ -129,6 +130,8 @@ while fvs.more():
 
 
     text_to_write = str(fps)
+    
+    # texted_image =cv2.putText(frame, text=text_to_write, org=(1140,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2.2, color=(0,0,0), thickness=5)
     texted_image =cv2.putText(frame, text=text_to_write, org=(1140,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2, color=text_color, thickness=5)
     # texted_image =cv2.putText(frame, text="hello", org=(750,150),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=2, color=(255,255,255), thickness=5)
 
@@ -138,8 +141,8 @@ while fvs.more():
 
 
     #drawing frametime graph
-    pt_width = 2
-    pt_spacing = 2
+    pt_width = 3
+    pt_spacing = 3 #distance between center of 2 points
     pt_gap = pt_spacing - pt_width
     
     plt_origin_x = 60
@@ -154,13 +157,27 @@ while fvs.more():
         	continue
         if prev_ft == 0:
             continue        
-        cv2.line(resize,(plt_origin_x + key*pt_spacing, plt_origin_y-value*y_scale),(plt_origin_x + key*pt_spacing + pt_width, plt_origin_y-value*y_scale),graph_color,1)
+        cv2.line(resize,(
+        	plt_origin_x + key*pt_spacing, 
+        	plt_origin_y-value*y_scale
+        	),(
+        	plt_origin_x + key*pt_spacing + pt_width, 
+        	plt_origin_y-value*y_scale
+        	),graph_color,2)
         if key !=0:
-            cv2.line(resize,(plt_origin_x + key*pt_spacing - pt_gap, plt_origin_y- prev_ft*y_scale),(plt_origin_x + key*pt_spacing, plt_origin_y-value*y_scale),graph_color,1)
-    cv2.rectangle(resize,(plt_origin_x,plt_origin_y-60),(plt_origin_x+frametime_samples*pt_spacing,plt_origin_y-10),text_color,1)
+            cv2.line(resize,(
+	            plt_origin_x + key*pt_spacing - pt_gap, 
+	            plt_origin_y- prev_ft*y_scale
+	            ),(
+	            plt_origin_x + key*pt_spacing, 
+	            plt_origin_y-value*y_scale
+	            ),graph_color,2) #vertical
+    cv2.rectangle(resize,(plt_origin_x,plt_origin_y-60),(plt_origin_x+frametime_samples*pt_spacing,plt_origin_y-10),text_color,2)
     cv2.putText(resize, text="16.7", org=(plt_origin_x+frametime_samples*pt_spacing+10,plt_origin_y-15),fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.4, color=text_color, thickness=1)
     cv2.putText(resize, text="33.3", org=(plt_origin_x+frametime_samples*pt_spacing+10,plt_origin_y- 15 - y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=text_color, thickness=1)
-    cv2.putText(resize, text="FRAME-TIME (MS)", org=(plt_origin_x,plt_origin_y -70),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=text_color, thickness=1)
+    # cv2.putText(resize, text="FRAMETIME (MS)", org=(plt_origin_x,plt_origin_y -70+1),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0,0,0), thickness=1)
+    # cv2.putText(resize, text="FRAMETIME (MS)", org=(plt_origin_x+1,plt_origin_y -70),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.5, color=(0,0,0), thickness=1)
+    cv2.putText(resize, text="FRAMETIME (MS)", org=(plt_origin_x,plt_origin_y -70),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.45, color=text_color, thickness=1)
 
     plt_origin_x = 60
     plt_origin_y = 500
@@ -180,9 +197,10 @@ while fvs.more():
         start_point = plt_origin_x + key*graph_speed		, plt_origin_y-(prev_ft-60)*y_scale
         end_point 	= plt_origin_x + (key+1)*graph_speed	, plt_origin_y-(value-60)*y_scale
         cv2.line(resize,(start_point),(end_point),graph_color,2)
-    cv2.rectangle(resize,(plt_origin_x,plt_origin_y),(plt_origin_x+fps_graph_samples*pt_spacing,plt_origin_y+40*y_scale),text_color,1)
+    # cv2.rectangle(resize,(plt_origin_x+1,plt_origin_y+1),(plt_origin_x+fps_graph_samples*pt_spacing+1,plt_origin_y+40*y_scale+1),shadow_color,1)
+    cv2.rectangle(resize,(plt_origin_x,plt_origin_y),(plt_origin_x+fps_graph_samples*pt_spacing,plt_origin_y+40*y_scale),text_color,2)
     cv2.line(resize,(plt_origin_x,plt_origin_y+20*y_scale),(plt_origin_x+fps_graph_samples*pt_spacing,plt_origin_y+20*y_scale),text_color,1)
-    cv2.putText(resize, text="FRAME-RATE (FPS)", org=(plt_origin_x+fps_graph_samples*pt_spacing -120,plt_origin_y-15),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=text_color, thickness=1)
+    cv2.putText(resize, text="FRAME-RATE (FPS)", org=(plt_origin_x+fps_graph_samples*pt_spacing -150,plt_origin_y-15),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.5, color=text_color, thickness=1)
     cv2.putText(resize, text="60", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+5),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=text_color, thickness=1)
     cv2.putText(resize, text="40", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+21*y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=text_color, thickness=1)
     cv2.putText(resize, text="20", org=(plt_origin_x+fps_graph_samples*pt_spacing+10,plt_origin_y+41*y_scale),fontFace=cv2.	FONT_HERSHEY_DUPLEX, fontScale=0.4, color=text_color, thickness=1)
