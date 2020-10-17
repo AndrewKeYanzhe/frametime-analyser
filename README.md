@@ -3,7 +3,7 @@ Frametime-analyser is a tool that detects duplicate frames in game footage to ca
 
 It is inspired from Digital Foundry's FPSGui tool:
 
-
+![](/Media/DF.gif)
 
 ## Setup
 
