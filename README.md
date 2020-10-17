@@ -32,3 +32,4 @@ Key processing steps
 ## Limitations
 
 * Frametime Analyser assumes the input video is encoded at a constant frame rate of 60 FPS, with dropped frames encoded as duplicate frames
+* Frametime Analyser does not account for screen tearing. V-Sync should be enabled when recording the game footage.
