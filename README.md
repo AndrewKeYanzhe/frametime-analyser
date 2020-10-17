@@ -22,8 +22,13 @@ Frametime Analyser requires the following prerequisites
 2. Open `Frametime Analyser.py` in a text editor and set `file_path` to the location of your video
 3. Run `Frametime Analyser.py`
 
+## Technical Overview
+
+Key processing steps
+1. Calculate absolute difference of each pixel relative to previous frame
+2. Calculate the average difference across the whole frame, giving the value `frame_diff`
+3. Compare `frame_diff` with the exponential moving average of `frame_diff`. If `frame_diff` is significantly lower than the moving average (suggesting a duplicate frame), the frame is counted as a duplicate
+
 ## Limitations
 
 * Frametime Analyser assumes the input video is encoded at a constant frame rate of 60 FPS, with dropped frames encoded as duplicate frames
-* Frametime Analyser does not account for screen tearing in the game recording. V-Sync should be enabled when recording the footage.
-
