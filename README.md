@@ -16,3 +16,7 @@ Frametime-analyser requires the following prerequisites
 * Numpy 1.14.3
 * Matplotlib 2.2.5
 
+## Usage
+
+1. Set the path of your video file in `file_path` variable in `Frametime Analyser.py`
+2. Run `Frametime Analyser.py`
