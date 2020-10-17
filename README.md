@@ -24,7 +24,7 @@ Frametime Analyser requires the following prerequisites
 
 Notes
 * Input video must be encoded at 60 FPS
-* OpenCV decodes video in software, so a fast CPU is recommended. i7-3770 is sufficient for H.264 1080p. H.265 or higher resolutions would require a faster CPU
+* OpenCV decodes video in software, so a fast CPU is recommended. i7-3770 is sufficient for H.264 @ 1080p. H.265 or higher resolutions would require a faster CPU
 
 ## Technical Overview
 
