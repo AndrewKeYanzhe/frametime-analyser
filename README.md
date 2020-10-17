@@ -22,6 +22,10 @@ Frametime Analyser requires the following prerequisites
 2. Open `Frametime Analyser.py` in a text editor and set `file_path` to the location of your video
 3. Run `Frametime Analyser.py`
 
+Notes
+* Input video must be encoded at 60FPS
+* OpenCV decodes video in software, so a fast CPU is recommended. i7-3770 is sufficient for H.264 1080p. H.265 or higher resolutions would require a faster CPU
+
 ## Technical Overview
 
 Key processing steps
