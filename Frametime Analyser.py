@@ -11,12 +11,12 @@ pause_frame = False
 #RDR2 capture
 # cap = cv2.VideoCapture("F:/ReLive/2020.09.18-22.33.mp4", cv2.CAP_MSMF)	#worse decoder
 file_path="F:/ReLive/rdr2 h264.m4v" #transcoded HEVC to h264
-
+file_path="F:/ReLive/2020.10.17-09.29.mp4" #second h264
 #ACO capture
-file_path="F:/ReLive/2020.09.24-21.36.mp4"
+# file_path="F:/ReLive/2020.09.24-21.36.mp4"
 
 # file_path="E:/Downloads/The Last of Us 2 - What 60fps Gameplay Looks Like.mp4"
-file_path="F:/ReLive/2020.10.14-21.51.mp4" #forza
+# file_path="F:/ReLive/2020.10.14q-21.51.mp4" #forza
 # cap = cv2.VideoCapture("E:\Downloads\GTA 5 ►RTX 3090 8k 60fps MAX SETTINGS With Ray Tracing Ultra Graphics Mod! GTA 6 Level PC Graphics!.mp4")
 
 
