@@ -3,7 +3,6 @@ import time
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-import time
 from libraries import *
 
 pause_frame = False 
