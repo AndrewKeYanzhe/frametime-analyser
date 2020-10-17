@@ -1,2 +1,16 @@
 # Frametime-Analyser
-Detect duplicate frames in game footage to calculate frametime
+Frametime-analyser is a tool that detects duplicate frames in game footage to calculate FPS and frametimes.
+
+It is inspired from Digital Foundry's FPSGui tool:
+
+![](/Media/DF.gif)
+
+## Setup
+
+Frametime-analyser requires the following prerequisites
+
+* Python 2.7.14
+* OpenCV 4.2.0
+* Numpy 1.14.3
+* Matplotlib 2.2.5
+
